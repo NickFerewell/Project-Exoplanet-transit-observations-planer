@@ -1,0 +1,29 @@
+body{
+    font-family: sans-serif;
+}
+
+#Title{
+    font-size: 14px;
+
+    text-align: center;
+}
+
+#PlanPlot{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table{
+    display: inline-table;
+    /* table-layout: fixed; */
+    width: 100%;
+    border-collapse: collapse;
+    border: 3px solid black;
+}
+
+table th,
+table td {
+    border: solid 3px;
+    padding: 5px;
+}
