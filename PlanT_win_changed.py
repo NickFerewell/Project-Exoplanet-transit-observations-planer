@@ -8,6 +8,7 @@ import shutil
 
 from string import Template
 import urllib.parse
+import ephem
 
 from astropy.time import Time, TimeDelta
 from astropy.io import ascii
@@ -283,9 +284,18 @@ print(getHTMLTable(collabel, Data))
 
 pageTemplateFile = open("pageTemplate.html", "r")
 pageTemplate = pageTemplateFile.read()
-pageRenderedFile = open("pageRendered.html", "w")
+renderedPage = open("index.html", "w")
 # print(pageTemplate)
-pageRenderedFile.write(Template(pageTemplate).substitute(Title = Title, mainTable = getHTMLTable(collabel, Data)))
+
+date = ephem.now()
+nnm = ephem.next_new_moon(date)
+pnm = ephem.previous_new_moon(date)
+moonPhase = (date-pnm)/(nnm-pnm)
+
+moon = ephem.Moon()
+moon.compute()
+moonLuminatedPercent = moon.phase
+renderedPage.write(Template(pageTemplate).substitute(Title = Title, mainTable = getHTMLTable(collabel, Data), MoonPhase = moonPhase, MoonLuminatedPercent = moonLuminatedPercent))
 
 pageTemplateFile.close()
-pageRenderedFile.close()
+renderedPage.close()

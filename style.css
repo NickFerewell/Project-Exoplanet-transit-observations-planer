@@ -1,8 +1,10 @@
 body{
     font-family: sans-serif;
+
+    width: fit-content;
 }
 
-#Title{
+#Title, #moonInfo{
     font-size: 14px;
 
     text-align: center;
@@ -26,4 +28,9 @@ table th,
 table td {
     border: solid 3px;
     padding: 5px;
+}
+
+#comments{
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

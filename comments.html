@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comments</title>
 
-    
-    
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
     <script>
@@ -16,8 +15,8 @@
         var target = parsedURL.searchParams.get("targ");
 
         const commentElement = document.createElement("p");
-        commentElement.setAttribute("id", "comment");
-        commentElement.innerHTML = "Comment for " + target + " :<br>&emsp;" + comment;
+        commentElement.setAttribute("id", "comments");
+        commentElement.innerHTML = "Comments for " + target + " :<br>&emsp;" + comment;
 
         document.body.appendChild(commentElement);
     </script>
