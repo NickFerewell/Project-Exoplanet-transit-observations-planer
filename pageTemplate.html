@@ -42,7 +42,7 @@
     <p id="Title">
         ${Title}
     </p>
-    <p id="moonInfo">Moon phase is ${MoonLuminatedPercent}%. 
+    <p id="moonInfo">Moon phase is ${MoonLuminatedPercent}% 
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"  viewBox="0 0 60 60" >
             <defs>
                 <radialGradient id="RadialGrad" fx="50%" fy="50%" r="65%" spreadMethod="pad">
@@ -63,7 +63,9 @@
     </p>
     <img id="PlanPlot" src="PlanPlot.svg">
 
-    ${mainTable}
+    <div id="tableWrapper">
+        ${mainTable}
+    </div>
 
 
     <script>

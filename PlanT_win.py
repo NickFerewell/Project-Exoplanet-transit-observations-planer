@@ -6,6 +6,10 @@ from matplotlib import gridspec
 import os
 import shutil
 
+from string import Template
+import urllib.parse
+import ephem
+
 from astropy.time import Time, TimeDelta
 from astropy.io import ascii
 import astropy.units as u
@@ -20,6 +24,8 @@ from Utils import Get_Exp_Master, Check_AzEl, Get_Coo, Get_Times, Check_El
 
 import warnings
 warnings.simplefilter("ignore")
+
+import textwrap
 #################################################################
 min_depth = 7.0
 max_mag = 14.
@@ -61,10 +67,11 @@ Min_lim = np.min(Plan['Time'][Zero])
 Max_lim = np.max(Plan['Time'][Zero])
 
 ##fig, axs = plt.subplots(2, 1, figsize=(8, 13), dpi=125)
-fig = plt.figure(figsize=(8, 13), dpi=125)
-gs = gridspec.GridSpec(2, 1, height_ratios=[1, 2])
+fig = plt.figure(figsize=(8, 6), dpi=125)
+# fig.add_axes([0, 0, 1, 1])
+gs = gridspec.GridSpec(1, 1, height_ratios=[1])
 axs0 = plt.subplot(gs[0])
-axs1 = plt.subplot(gs[1])
+# axs1 = plt.subplot(gs[1])
 
 try:
     Night = np.where(Plan['Sun_El']<=-18)
@@ -95,10 +102,10 @@ axs0.plot(Plan['Time'], Plan['Moon_El'], 'b-.', alpha=0.5, label='Moon')
 #################################################################
 ##axs1.set_position([0.125, 0.05, 0.8, 0.35])
 collabel=('Target', 'Coord', 'Start(UTC)', 'Duration(h)', 'Depth(mmag)',  \
-          'Vmag', 'Exp(s)', '2Moon(d)')
-widths=([3/21., 5/21., 4/21., 2/21., 2/21., 1.5/21., 1.5/21., 2/21.])
+          'Vmag', 'Exp(s)', '2Moon(d)', 'Comments', 'Priority')
+'''widths=([3/210., 5/210., 4/210., 2/210., 2/210., 1.5/210., 1.5/210., 2/210., 189/210.])
 axs1.axis('tight')
-axs1.axis('off')
+axs1.axis('off')'''
 Data = []
 colors = []
 
@@ -142,7 +149,7 @@ if len(Tess_List)>0:
             sep = Moon.separation(Eq).degree
             sep = np.round(sep, 2)
             
-            colors.append(['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'])
+            colors.append(['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'])
 ##            if Check_AzEl(Tess_List['coords(J2000)'][row], Tess_List['az_start'][row]):
 ##                colors[-1][1] = 'lightpink' ##bad master angle
             Exp = Get_Exp_Master(Tess_List['V'][row])
@@ -166,7 +173,9 @@ if len(Tess_List)>0:
                          Tess_List['depth(mmag)'][row],\
                          Tess_List['V'][row],\
                          Get_Exp_Master(Tess_List['V'][row]),\
-                         sep])
+                         sep, \
+                         Tess_List['comments'][row]
+                        ])
             
             D = axs0.plot((ObsAltAz['obstime'].jd - Plan['JD'][0].jd)*24.,\
                         ObsAltAz['El'], \
@@ -177,14 +186,15 @@ if len(Tess_List)>0:
                         label=Tess_List['Name'][row],\
                         color = D[-1].get_color(), linewidth=2)
 ##        colors[-1][0] = D[-1].get_color()
-    
+    '''
     the_table = axs1.table(cellText=Data, colLabels=collabel, \
                              colWidths=widths, cellColours = colors,\
                              loc='upper center')
     the_table.auto_set_font_size(False)
-    the_table.set_fontsize(6)
+    the_table.set_fontsize(3)
+    the_table.scale(2, 4) '''
     
-    Title = Title + '\nTESS transits with depth>'+str(min_depth)+'mmag and Vmag<'+str(max_mag)
+    Title = Title + '<br>TESS transits with depth>'+str(min_depth)+'mmag and Vmag<'+str(max_mag)
 else:
     Title = 'List is empty for some reasons. Maybe night starts/ends at nautical twilight.'
 
@@ -198,16 +208,117 @@ axs0.set_xlim(Min_lim, Max_lim)
 axs0.set_xlabel('UTC, ' + Start.datetime.strftime('%Y-%m-%d'), fontsize=6)
 axs0.set_ylim(-20, None)
 axs0.set_ylabel('Elevation (deg)', fontsize=6)
-axs0.legend(loc='upper center', fontsize=5, bbox_to_anchor=(0.5, 1.32), ncol=6)
+axs0.legend(loc='lower center', fontsize=5, bbox_to_anchor=(0.5, 1), ncol=6)
 axs0.grid()
+
 
 ##plt.show()
 
-fig.suptitle(Title, fontsize=8)
+# fig.suptitle(Title, fontsize=8)
+
 ##Name = 'PlanT.pdf'
 ##if os.path.isfile(Name):
 ##   os.remove(Name)
 ##plt.savefig(Name)
 ##shutil.move(Name, '/var/www/htdocs/PlanT.pdf')
-plt.show()
 
+plt.savefig("PlanPlot.svg", format="svg", transparent=True, bbox_inches='tight')
+# plt.show()
+
+
+def rateObservations(observationInfo = []):
+    rating = 0
+    rating = +observationInfo[collabel.index("2Moon(d)")] * moonLuminatedPercent/100 + observationInfo[collabel.index("Depth(mmag)")] + observationInfo[collabel.index("Exp(s)")] - observationInfo[collabel.index("Vmag")]
+    # print(observationInfo[collabel.index("Depth(mmag)")], observationInfo[collabel.index("Vmag")], observationInfo[collabel.index("Exp(s)")], observationInfo[collabel.index("2Moon(d)")], rating)
+    # observationInfo.append(rating)
+
+    return rating
+
+
+'''
+collabelsForDisplay = {"Target": "Name", "Coord": "coords(J2000)", "Start(UTC)": ""}
+
+def getHTMLTableFromAstropy(astropyTable):
+    columnHeaders = astropyTable.colnames
+
+    print(columnHeaders, collabel)
+    table = '<table>'
+    table += '<tr>'
+    for header in columnHeaders:
+        if header in collabelsForDisplay.values():
+            table += '<th>' + str(header) + '</th>'
+    table += '</tr>'
+
+    for row in range(len(astropyTable)):
+        table += '<tr>'
+        for col in columnHeaders:
+            if col in collabelsForDisplay.values():
+                table += '<th>' + str(astropyTable[row][col]) + '</th>'
+        table += '</tr>'
+    
+    table += '</table>'
+    return table
+'''
+
+def getHTMLTable(columnHeaders = [''], rows = [['']]):
+    colOfTarget = 0
+    colOfComments = 0
+
+    table = '<table>'
+    table += '<tr>'
+    for i in range(len(columnHeaders)):
+        if columnHeaders[i] == "Name":
+            colOfTarget = i
+        if columnHeaders[i] == "Comments":
+            colOfComments = i
+            continue
+        table += '<th>' + str(columnHeaders[i]) + '</th>'
+    table += '</tr>'
+
+    for row in rows:
+        table += '<tr>'
+        for i in range(len(row)):
+            if i == colOfComments:
+                continue
+            if i == colOfTarget:
+                table += '<th><a class="targetName" href="comments.html?com='+ urllib.parse.quote_plus(str(row[colOfComments])) +'&targ='+ urllib.parse.quote_plus(str(row[i])) +'">' + str(row[i]) + '</a></th>'
+            else:
+                table += '<th>' +str(row[i]) +'</th>'
+        table += '</tr>'
+    
+    table += '</table>'
+    return table 
+
+
+# print(getHTMLTable(collabel, Data))
+# print(repr(Tess_List.keys()))
+# Tess_List.show_in_browser(jsviewer=True)
+
+
+
+date = ephem.now()
+nnm = ephem.next_new_moon(date)
+pnm = ephem.previous_new_moon(date)
+moonPhase = (date-pnm)/(nnm-pnm)
+
+moon = ephem.Moon()
+moon.compute()
+moonLuminatedPercent = moon.phase
+
+Data.sort(key=rateObservations, reverse=True)
+# collabel.append("Priority")
+for i in range(len(Data)):
+    Data[i].append(str(i+1))
+
+
+
+
+pageTemplateFile = open("pageTemplate.html", "r")
+pageTemplate = pageTemplateFile.read()
+renderedPage = open("index.html", "w")
+# print(pageTemplate)
+
+renderedPage.write(Template(pageTemplate).substitute(Title = Title, mainTable = getHTMLTable(collabel, Data), MoonPhase = moonPhase, MoonLuminatedPercent = int(moonLuminatedPercent)))
+
+pageTemplateFile.close()
+renderedPage.close()

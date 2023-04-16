@@ -46,7 +46,7 @@ def TTF_Query(DateObs, min_depth, max_mag, Target):
 ##        message = ascii.read(req.text, delimiter = ',', format = 'commented_header', quotechar = '"') 
 ##        re.sub(r'[^\x00-\x7f]',r'', message)
         
-    print(message[0][25])
+    # print(message[0][25])
     return message
 
 
