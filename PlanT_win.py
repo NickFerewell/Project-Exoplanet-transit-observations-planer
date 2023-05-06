@@ -35,8 +35,8 @@ Kou= EarthLocation(lat=57.036537*u.deg, \
 #################################################################
 Local_Time = Time.now()
 ##Local_Time = Time('2022-08-02T12:28:01.0', format='fits')
-##Test = TimeDelta(5*24*3600, format='sec')
-##Local_Time = Local_Time + Test
+# Test = TimeDelta(20*24*3600, format='sec')
+# Local_Time = Local_Time - Test
 TimeZone = TimeDelta(5*3600, format='sec')
 Start = Time(np.round(Local_Time.jd), format='jd') - TimeZone
 
@@ -102,7 +102,7 @@ axs0.plot(Plan['Time'], Plan['Moon_El'], 'b-.', alpha=0.5, label='Moon')
 #################################################################
 ##axs1.set_position([0.125, 0.05, 0.8, 0.35])
 collabel=('Target', 'Coord', 'Start(UTC)', 'Duration(h)', 'Depth(mmag)',  \
-          'Vmag', 'Exp(s)', '2Moon(d)', 'Comments', 'Priority')
+          'Vmag', 'Exp(s)', '2Moon(d)', 'Comments', 'Priority', 'Quality')
 '''widths=([3/210., 5/210., 4/210., 2/210., 2/210., 1.5/210., 1.5/210., 2/210., 189/210.])
 axs1.axis('tight')
 axs1.axis('off')'''
@@ -174,7 +174,8 @@ if len(Tess_List)>0:
                          Tess_List['V'][row],\
                          Get_Exp_Master(Tess_List['V'][row]),\
                          sep, \
-                         Tess_List['comments'][row]
+                         Tess_List['comments'][row], \
+                         Tess_List['priority'][row]
                         ])
             
             D = axs0.plot((ObsAltAz['obstime'].jd - Plan['JD'][0].jd)*24.,\
@@ -208,8 +209,15 @@ axs0.set_xlim(Min_lim, Max_lim)
 axs0.set_xlabel('UTC, ' + Start.datetime.strftime('%Y-%m-%d'), fontsize=6)
 axs0.set_ylim(-20, None)
 axs0.set_ylabel('Elevation (deg)', fontsize=6)
-axs0.legend(loc='lower center', fontsize=5, bbox_to_anchor=(0.5, 1), ncol=6)
 axs0.grid()
+
+plt.savefig("PlanPlot.svg", format="svg", transparent=True, bbox_inches='tight')
+
+
+legendFigure = plt.figure()
+legendPlot = plt.figlegend(*axs0.get_legend_handles_labels(), loc='lower center', fontsize=5, bbox_to_anchor=(0.5, 1), ncol=6)
+legendFigure.savefig("PlanLegend.svg", format="svg", transparent=True, bbox_inches="tight")
+
 
 
 ##plt.show()
@@ -222,7 +230,7 @@ axs0.grid()
 ##plt.savefig(Name)
 ##shutil.move(Name, '/var/www/htdocs/PlanT.pdf')
 
-plt.savefig("PlanPlot.svg", format="svg", transparent=True, bbox_inches='tight')
+# plt.savefig("PlanPlot.svg", format="svg", transparent=True, bbox_inches='tight')
 # plt.show()
 
 
@@ -318,7 +326,7 @@ pageTemplate = pageTemplateFile.read()
 renderedPage = open("index.html", "w")
 # print(pageTemplate)
 
-renderedPage.write(Template(pageTemplate).substitute(Title = Title, mainTable = getHTMLTable(collabel, Data), MoonPhase = moonPhase, MoonLuminatedPercent = int(moonLuminatedPercent)))
+renderedPage.write(Template(pageTemplate).substitute(Title = Title, mainTable = getHTMLTable(collabel, Data) if len(Data) != 0 else "<p id='noTargets'>No targets to observe</p>", MoonPhase = moonPhase, MoonLuminatedPercent = int(moonLuminatedPercent)))
 
 pageTemplateFile.close()
 renderedPage.close()

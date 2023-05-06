@@ -6,17 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comments</title>
 
-    <link href="style.css" rel="stylesheet">
+    <link href="stylization.css" rel="stylesheet">
 </head>
 <body>
+    <h4 id="commentsHeader">Comments for </h4>
+    <p id="comments"></p>
     <script>
         const parsedURL = new URL(window.location.href);
         var comment = parsedURL.searchParams.get("com");
         var target = parsedURL.searchParams.get("targ");
 
-        const commentElement = document.createElement("p");
-        commentElement.setAttribute("id", "comments");
-        commentElement.innerHTML = "Comments for " + target + " :<br>&emsp;" + comment;
+        const headerElement = document.getElementById("commentsHeader");
+        headerElement.innerHTML += target;
+
+        const commentElement = document.getElementById("comments");
+        commentElement.innerHTML = comment;
 
         document.body.appendChild(commentElement);
     </script>

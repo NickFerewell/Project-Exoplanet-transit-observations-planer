@@ -1,75 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planer</title>
+    <title>Exoplanet Transit Planer</title>
 
-    <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet"> -->
-
-    <link href="style.css" rel="stylesheet">
+    <link rel="stylesheet" href="stylization.css">
+    
     <link rel="icon" type="image/x-icon" href="icon.svg">
 
-
+    
     <script type="text/javascript">
-		function setPhase(phase) {
-			let shadowArc = document.getElementById('shadowArc');
-			let shadowRect = document.getElementById('shadowRect');
-            var width = 40*Math.cos(phase*3.1415*2);
-            if(phase > 0.75){
-                width *= -1;
-				shadowRect.setAttribute("x", "30");
-				shadowArc.setAttribute("fill", "grey");
-            } else if(phase > 0.5){
-				shadowRect.setAttribute("x", "30");
-                width *= -1;
-				shadowArc.setAttribute("fill", "white");
-			} else if(phase > 0.25){
-				shadowRect.setAttribute("x", "0");
-				shadowArc.setAttribute("fill", "white");
-			} else{
-				shadowRect.setAttribute("x", "0");
-				shadowArc.setAttribute("fill", "grey");
-			}
-            shadowArc.setAttribute("d", "M 30 0 V 60 C " + (30 + width) + " 60 " + (30 + width) + " 0 30 0");
-		}
-	</script>
-</head>
-<body>
+      function setPhase(phase) {
+        let shadowArc = document.getElementById('shadowArc');
+        let shadowRect = document.getElementById('shadowRect');
+              var width = 40*Math.cos(phase*3.1415*2);
+              if(phase > 0.75){
+                  width *= -1;
+          shadowRect.setAttribute("x", "30");
+          shadowArc.setAttribute("fill", "grey");
+              } else if(phase > 0.5){
+          shadowRect.setAttribute("x", "30");
+                  width *= -1;
+          shadowArc.setAttribute("fill", "white");
+        } else if(phase > 0.25){
+          shadowRect.setAttribute("x", "0");
+          shadowArc.setAttribute("fill", "white");
+        } else{
+          shadowRect.setAttribute("x", "0");
+          shadowArc.setAttribute("fill", "grey");
+        }
+              shadowArc.setAttribute("d", "M 30 0 V 60 C " + (30 + width) + " 60 " + (30 + width) + " 0 30 0");
+      }
+    </script>
+  </head>
+ <body>
+  <h1>
+      <p class="tekst" ><b>EXOPLANET TRANSIT PLANNER</b></p>
+  </h1>
+
+  <h2>
     <p id="Title">
-        ${Title}
+      ${Title}
     </p>
     <p id="moonInfo">Moon phase is ${MoonLuminatedPercent}% 
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"  viewBox="0 0 60 60" >
-            <defs>
-                <radialGradient id="RadialGrad" fx="50%" fy="50%" r="65%" spreadMethod="pad">
-                    <stop offset="0%"   stop-color="#E7D68C" stop-opacity="1"/>
-                    <stop offset="100%" stop-color="#FFFEED" stop-opacity="1" />
-                </radialGradient>
-            </defs>
-            <!-- <rect width="100%" height="100%" /> -->
-            <circle cx="30" cy="30" r="30" />
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"  viewBox="0 0 60 60" >
+          <defs>
+              <radialGradient id="RadialGrad" fx="50%" fy="50%" r="65%" spreadMethod="pad">
+                  <stop offset="0%"   stop-color="#E7D68C" stop-opacity="1"/>
+                  <stop offset="100%" stop-color="#FFFEED" stop-opacity="1" />
+              </radialGradient>
+          </defs>
+          <!-- <rect width="100%" height="100%" /> -->
+          <circle cx="30" cy="30" r="30" />
 
-            <mask id="shadowMask">
-                <rect x="0" y="0" width="100" height="100" fill="white" />
-                <rect id="shadowRect" x="0" y="0" width="30" height="60" fill="grey"/>
-                <path id="shadowArc" d="M 30 0 V 60 C 70 60 70 0 30 0" fill="grey" />
-            </mask>
-            <circle cx="30" cy="30" r="30" stroke="black"  fill="url(#RadialGrad)" mask="url(#shadowMask)"/>
-	    </svg>
+          <mask id="shadowMask">
+              <rect x="0" y="0" width="100" height="100" fill="white" />
+              <rect id="shadowRect" x="0" y="0" width="30" height="60" fill="grey"/>
+              <path id="shadowArc" d="M 30 0 V 60 C 70 60 70 0 30 0" fill="grey" />
+          </mask>
+          <circle cx="30" cy="30" r="30" stroke="black"  fill="url(#RadialGrad)" mask="url(#shadowMask)"/>
+      </svg>
     </p>
+  </h2>
+
+  <p class="img" align="middle">
+    <img id="PlanLegend" src="PlanLegend.svg">
+  </p>
+
+  <p class="img" align="middle">
     <img id="PlanPlot" src="PlanPlot.svg">
+  </p>
 
-    <div id="tableWrapper">
-        ${mainTable}
-    </div>
+  <div id="tableWrapper" >
+    ${mainTable}
+  </div>
 
 
-    <script>
-        setPhase(${MoonPhase})
-    </script>
+  <script>
+      setPhase(${MoonPhase})
+  </script>
 </body>
-</html>
+<footer>
+  <p class="by">by Anna Azheganova, Ural Federal University, Institute of Natural Sciences and Mathematics  </p>
+</footer>
+  
