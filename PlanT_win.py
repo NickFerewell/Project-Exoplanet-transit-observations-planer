@@ -102,7 +102,7 @@ axs0.plot(Plan['Time'], Plan['Moon_El'], 'b-.', alpha=0.5, label='Moon')
 #################################################################
 ##axs1.set_position([0.125, 0.05, 0.8, 0.35])
 collabel=('Target', 'Coord', 'Start(UTC)', 'Duration(h)', 'Depth(mmag)',  \
-          'Vmag', 'Exp(s)', '2Moon(d)', 'Comments', 'Priority', 'Quality')
+          'Vmag', 'Exp(s)', '2Moon(d)', 'Comments', 'Priority')
 '''widths=([3/210., 5/210., 4/210., 2/210., 2/210., 1.5/210., 1.5/210., 2/210., 189/210.])
 axs1.axis('tight')
 axs1.axis('off')'''
@@ -315,8 +315,8 @@ moonLuminatedPercent = moon.phase
 
 Data.sort(key=rateObservations, reverse=True)
 # collabel.append("Priority")
-for i in range(len(Data)):
-    Data[i].append(str(i+1))
+# for i in range(len(Data)):
+#     Data[i].append(str(i+1))
 
 
 

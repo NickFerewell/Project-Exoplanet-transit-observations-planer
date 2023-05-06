@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+
 body{
     background-color: rgb(221, 215, 215);
 }
@@ -24,6 +26,8 @@ h2{
 
     margin-top: 0;
     margin-bottom: 2px;
+
+    font-family: 'Noto Sans', sans-serif;
 }
 
 .img{
@@ -73,6 +77,13 @@ table td {
     padding: 2px 4px;
 }
 
+#noTargets{
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+
+    font-family: 'Noto Sans', sans-serif;
+}
 
 .by{
     color:rgb(210, 210, 210);
